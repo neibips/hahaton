@@ -8,8 +8,10 @@ type Props = {
 
 }
 
+const dev: boolean = true;
+
 const UserInfo: React.FC<Props> = ({}) => {
-    const [user, setUser] = useState<any>();
+    const [user, setUser] = useState();
     const { addTask } = useGoalsContext();
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -22,7 +24,7 @@ const UserInfo: React.FC<Props> = ({}) => {
     };
 
     const getUser = async () => {
-        const result = await fetch('http://localhost:3000/users/1').then(response => {
+        const result = await fetch(dev ? 'http://171.22.31.0:3000/users/1' : 'http://localhost:3000/users/1').then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -31,11 +33,12 @@ const UserInfo: React.FC<Props> = ({}) => {
             .then(data => data)
             .catch(error => console.error('Error:', error));
 
-        setUser(result);
+        return result;
     }
 
     useEffect(() => {
-        getUser();
+        getUser()
+            .then((result) => setUser(result));
     }, []);
 
   return(
